@@ -11,6 +11,7 @@ namespace CursoMinimal.API.Profiles
         public MealProfile()
         {
             CreateMap<Meal, MealModel>().ReverseMap();
+            CreateMap<Meal, RequestMealModel>().ReverseMap();
             CreateMap<Ingredient, IngredientModel>()
                 .ForMember(
                     m => m.MealId,
