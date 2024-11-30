@@ -71,7 +71,7 @@ namespace CursoMinimal.API.EndpointHandlers
             });
         }
 
-        public static async Task<Results<NotFound, NoContent>> DeleteMealsAsync(MealDbContext dbContext, IMapper mapper, int mealsId)
+        public static async Task<Results<NotFound, NoContent>> DeleteMealsAsync(MealDbContext dbContext, int mealsId)
         {
             var mealEntity = await dbContext.Meals.FirstOrDefaultAsync(x => x.Id == mealsId);
             if (mealEntity == null)

@@ -1,4 +1,5 @@
-﻿using CursoMinimal.API.EndpointHandlers;
+﻿using CursoMinimal.API.EndpointFilters;
+using CursoMinimal.API.EndpointHandlers;
 
 namespace CursoMinimal.API.Extensions
 {
@@ -8,13 +9,15 @@ namespace CursoMinimal.API.Extensions
         {
             var mealsEndpoints = endpoints.MapGroup("/meals");
             var mealsParamEndpoints = mealsEndpoints.MapGroup("/{mealsId:int}");
+            var mealsParamAndFilter = mealsParamEndpoints.MapGroup("/meals/{mealsId:int}").AddEndpointFilter(new MealIsLockedFilter(5));
 
             mealsEndpoints.MapGet("", MealsHandlers.GetMealsAsync);
             mealsEndpoints.MapPost("", MealsHandlers.PostMealsAsync);
             mealsParamEndpoints.MapGet("", MealsHandlers.GetMealsByIdAsync).WithName("GetMeals");
-            mealsParamEndpoints.MapPut("", MealsHandlers.PutMealsAsync);
-            mealsParamEndpoints.MapDelete("", MealsHandlers.DeleteMealsAsync);
-            
+            mealsParamAndFilter.MapPut("", MealsHandlers.PutMealsAsync);
+
+            mealsParamAndFilter.MapDelete("", MealsHandlers.DeleteMealsAsync).AddEndpointFilter<LogNotFoundResponseFilter>();
+
         }
 
         public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpoints)
