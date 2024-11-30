@@ -7,9 +7,17 @@ namespace CursoMinimal.API.Extensions
     {
         public static void RegisterMealsEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            var mealsEndpoints = endpoints.MapGroup("/meals");
+
+            endpoints.MapGet("/depreciatedexample", (int param) => "Test to deprecate the endpoint").WithOpenApi(o =>
+            {
+                o.Deprecated = true;
+                return o;
+            }).WithSummary("This endpoint is deprecated and will be deprecated in V2")
+            .WithDescription("Here description for which endpoint to use");
+
+            var mealsEndpoints = endpoints.MapGroup("/meals").RequireAuthorization("RequireAdminFromBrazil").RequireAuthorization();
             var mealsParamEndpoints = mealsEndpoints.MapGroup("/{mealsId:int}");
-            var mealsParamAndFilter = mealsParamEndpoints.MapGroup("/meals/{mealsId:int}").AddEndpointFilter(new MealIsLockedFilter(5));
+            var mealsParamAndFilter = endpoints.MapGroup("/meals/{mealsId:int}").RequireAuthorization().AddEndpointFilter(new MealIsLockedFilter(5));
 
             mealsEndpoints.MapGet("", MealsHandlers.GetMealsAsync);
             mealsEndpoints.MapPost("", MealsHandlers.PostMealsAsync);
@@ -22,7 +30,7 @@ namespace CursoMinimal.API.Extensions
 
         public static void RegisterIngredientsEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            var mealsEndpoints = endpoints.MapGroup("/meals");
+            var mealsEndpoints = endpoints.MapGroup("/meals").RequireAuthorization("RequireAdminFromBrazil").RequireAuthorization();
             var mealsParamEndpoints = mealsEndpoints.MapGroup("/{mealsId:int}");
             mealsParamEndpoints.MapGet("/ingredients", IngredientsHandlers.GetMealsIngredientsAsync);
 
