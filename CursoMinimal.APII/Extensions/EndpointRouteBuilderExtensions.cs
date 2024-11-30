@@ -22,6 +22,8 @@ namespace CursoMinimal.API.Extensions
             var mealsEndpoints = endpoints.MapGroup("/meals");
             var mealsParamEndpoints = mealsEndpoints.MapGroup("/{mealsId:int}");
             mealsParamEndpoints.MapGet("/ingredients", IngredientsHandlers.GetMealsIngredientsAsync);
+
+            mealsParamEndpoints.MapPost("/ingredients", IngredientsHandlers.GetMealsIngredientsAsync);
         }
     }
 }

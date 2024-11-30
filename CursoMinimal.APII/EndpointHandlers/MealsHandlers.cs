@@ -10,14 +10,24 @@ namespace CursoMinimal.API.EndpointHandlers
 {
     public static class MealsHandlers
     {
-        public static async Task<Results<NoContent, Ok<IEnumerable<MealModel>>>> GetMealsAsync(MealDbContext dbContext, IMapper mapper, [FromQuery(Name = "name")] string? mealName)
+        public static async Task<Results<NoContent, Ok<IEnumerable<MealModel>>>> GetMealsAsync(
+            MealDbContext dbContext,
+            IMapper mapper,
+            ILogger<MealModel> logger,
+            [FromQuery(Name = "name")] string? mealName)
         {
             var mealsEntity = await dbContext.Meals.Where(x => mealName == null || x.Name.ToLower().Contains(mealName.ToLower())).ToListAsync();
 
             if (mealsEntity == null)
+            {
+                logger.LogInformation("meal not found");
                 return TypedResults.NoContent();
+            }
             else
+            {
+                logger.LogInformation("return meal found");
                 return TypedResults.Ok(mapper.Map<IEnumerable<MealModel>>(mealsEntity));
+            }
         }
 
         public static async Task<CreatedAtRoute<MealModel>> PostMealsAsync(MealDbContext dbContext, IMapper mapper, [FromBody] RequestMealModel? requestMeal)
